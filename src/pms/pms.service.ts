@@ -8,6 +8,7 @@ import { RcgInfo } from './entities/rcgInfo.entity';
 import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
+import { ParkingLogDto } from './dto/parkingLog.dto';
 
 @Injectable()
 export class ParkingPmsService {
@@ -30,13 +31,17 @@ export class ParkingPmsService {
     private readonly scInfoRepository: Repository<ScInfo>,
   ){}
 
+  private handleDatabaseError(error: any, context: string) {
+    this.logger.error(`Error in ${context}`, error.stack);
+    throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   // 장비 목록 조회
   async findEqInfo(): Promise<EqInfo[]> {
     try {
       return await this.eqInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching equipment information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findEqInfo');
     }
   }
 
@@ -45,13 +50,13 @@ export class ParkingPmsService {
     try {
       return await this.enexInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching entry/exit information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findEnExInfo');
     }
   }
 
   // 입출차 로그 조회
-  async findParkingLogInfo(name?: string, startDate?: string, endDate?: string) {
+  async findParkingLogInfo(parkingLogDto: ParkingLogDto) {
+    const {name, startDate, endDate} = parkingLogDto;
     try{
       const query = await this.eqInfoRepository
       .createQueryBuilder('eqinfo')
@@ -73,10 +78,10 @@ export class ParkingPmsService {
       }
 
       if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        end.setDate(end.getDate() + 1); 
-        query.andWhere("enexinfo.enexdt >= :startDate AND enexinfo.enexdt < :endDate", { startDate: start, endDate: end });
+        query.andWhere('enexinfo.enexdt BETWEEN :startDate AND :endDate', {
+          startDate,
+          endDate: new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)),
+        });
       }
 
       const result = await query.getRawMany();
@@ -96,8 +101,7 @@ export class ParkingPmsService {
       return Object.values(parsingResult);
 
     }catch (error) {
-      this.logger.error('Error fetching parking log information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findParkingLogInfo');
     }
   }
 
@@ -108,8 +112,7 @@ export class ParkingPmsService {
     try {
       return await this.parkInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching parking information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findParkInfo');
     }
   }
 
@@ -120,8 +123,7 @@ export class ParkingPmsService {
     try {
       return await this.rcgInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching recognition information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findRcgInfo');
     }
   }
 
@@ -132,8 +134,7 @@ export class ParkingPmsService {
     try {
       return await this.scUserInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching regular user information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findScUserInfo');
     }
   }
   
@@ -144,8 +145,7 @@ export class ParkingPmsService {
     try {
       return await this.scIssInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching regular issuance information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findScIssInfo');
     }
   }
 
@@ -156,8 +156,7 @@ export class ParkingPmsService {
     try {
       return await this.scInfoRepository.find();
     } catch (error) {
-      this.logger.error('Error fetching regular information', error.stack);
-      throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      this.handleDatabaseError(error, 'findScInfo');
     }
   }
 

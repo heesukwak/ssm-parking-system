@@ -7,6 +7,7 @@ import { RcgInfo } from './entities/rcgInfo.entity';
 import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
+import { ParkingLogDto } from './dto/parkingLog.dto';
 
 
 @Controller('pms')
@@ -33,12 +34,8 @@ export class ParkingPmsController {
    * 입출차 로그 조회
   */
  @Get('getParkingLog')
- async getParkingLogInfo(
-   @Query('name') name?: string,
-   @Query('startDate') startDate?: string,
-   @Query('endDate') endDate?: string,
-  ) {
-    const result = await this.parkingPmsService.findParkingLogInfo(name, startDate, endDate);
+ async getParkingLogInfo(@Query() parkingLogDto : ParkingLogDto) {
+    const result = await this.parkingPmsService.findParkingLogInfo(parkingLogDto);
     return {
       resultCode: "SUCCESS",
       body: result
