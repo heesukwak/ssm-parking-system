@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EqInfo } from './entities/eqinfo.entity';
@@ -9,10 +9,10 @@ import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
 import { ParkingLogDto } from './dto/parkingLog.dto';
+import { handleDatabaseError } from 'src/utils/error.util';
 
 @Injectable()
 export class ParkingPmsService {
-  private readonly logger = new Logger(ParkingPmsService.name);
 
   constructor(
     @InjectRepository(EqInfo)
@@ -31,17 +31,12 @@ export class ParkingPmsService {
     private readonly scInfoRepository: Repository<ScInfo>,
   ){}
 
-  private handleDatabaseError(error: any, context: string) {
-    this.logger.error(`Error in ${context}`, error.stack);
-    throw new HttpException('Database query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-  }
-
   // 장비 목록 조회
   async findEqInfo(): Promise<EqInfo[]> {
     try {
       return await this.eqInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findEqInfo');
+      handleDatabaseError(error, 'findEqInfo');
     }
   }
 
@@ -50,7 +45,7 @@ export class ParkingPmsService {
     try {
       return await this.enexInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findEnExInfo');
+      handleDatabaseError(error, 'findEnExInfo');
     }
   }
 
@@ -101,7 +96,7 @@ export class ParkingPmsService {
       return Object.values(parsingResult);
 
     }catch (error) {
-      this.handleDatabaseError(error, 'findParkingLogInfo');
+      handleDatabaseError(error, 'findParkingLogInfo');
     }
   }
 
@@ -112,7 +107,7 @@ export class ParkingPmsService {
     try {
       return await this.parkInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findParkInfo');
+      handleDatabaseError(error, 'findParkInfo');
     }
   }
 
@@ -123,7 +118,7 @@ export class ParkingPmsService {
     try {
       return await this.rcgInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findRcgInfo');
+      handleDatabaseError(error, 'findRcgInfo');
     }
   }
 
@@ -134,7 +129,7 @@ export class ParkingPmsService {
     try {
       return await this.scUserInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findScUserInfo');
+      handleDatabaseError(error, 'findScUserInfo');
     }
   }
   
@@ -145,7 +140,7 @@ export class ParkingPmsService {
     try {
       return await this.scIssInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findScIssInfo');
+      handleDatabaseError(error, 'findScIssInfo');
     }
   }
 
@@ -156,7 +151,7 @@ export class ParkingPmsService {
     try {
       return await this.scInfoRepository.find();
     } catch (error) {
-      this.handleDatabaseError(error, 'findScInfo');
+      handleDatabaseError(error, 'findScInfo');
     }
   }
 

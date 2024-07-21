@@ -25,6 +25,7 @@ import { EqInfo } from './pms/entities/eqinfo.entity';
     ParkingPmsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,],
 })
 export class AppModule {}
