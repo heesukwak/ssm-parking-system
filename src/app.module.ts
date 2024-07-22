@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParkingPmsModule } from './pms/pms.module';
 import { EqInfo } from './pms/entities/eqinfo.entity';
+import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -26,6 +28,13 @@ import { EqInfo } from './pms/entities/eqinfo.entity';
   ],
   controllers: [AppController],
   providers: [
-    AppService,],
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
+    
+   
 })
 export class AppModule {}

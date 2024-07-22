@@ -53,7 +53,7 @@ export class ParkingPmsService {
   async findParkingLogInfo(parkingLogDto: ParkingLogDto) {
     const {name, startDate, endDate} = parkingLogDto;
     try{
-      const query = await this.eqInfoRepository
+      const query = this.eqInfoRepository
       .createQueryBuilder('eqinfo')
       .leftJoinAndSelect('enexinfo', 'enexinfo', 'eqinfo.eqno = enexinfo.eqno')
       .select([
@@ -72,24 +72,37 @@ export class ParkingPmsService {
         query.where("eqinfo.name IN (:...names)", { names: ['입구', '출구'] });
       }
 
-      if (startDate && endDate) {
-        query.andWhere('enexinfo.enexdt BETWEEN :startDate AND :endDate', {
-          startDate,
-          endDate: new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)),
+      function convertToLocalISO(dateString, addDays = 0) {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + addDays);
+        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('.')[0] + 'Z';
+      }
+      
+      const setStartDate = convertToLocalISO(startDate);
+      const setEndDate = convertToLocalISO(endDate, 1); 
+      
+      if (setStartDate && setEndDate) {
+        console.log(setEndDate, setStartDate);
+        query.andWhere('enexinfo.enexdt >= :setStartDate AND enexinfo.enexdt < :setEndDate', {
+          setStartDate,
+          setEndDate,
         });
       }
-
+      
       const result = await query.getRawMany();
-
+      
       const parsingResult = result.reduce((acc, body) => {
         const { eqno, name, carno, enexdt, enextypeid, tkttypeid, mkdt } = body;
         if (!acc[eqno]) {
           acc[eqno] = { eqno, name,log: [] };
         }
-        acc[eqno].log.push({ carno, enexdt, 
+        acc[eqno].log.push({ 
+          carno, 
+          enexdt, 
           enextypeid: enextypeid === 1 ? '입차' : enextypeid === 2 ? '출차' : enextypeid === 3 ? '수동입차': enextypeid === 4 ? '수동출차': '기타',
           tkttypeid: tkttypeid === 1 ? '일반권' : tkttypeid === 2 ? '정기권' : '기타', 
-          mkdt });
+          mkdt 
+        });
         return acc;
       }, {});
     
