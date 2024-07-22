@@ -12,27 +12,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - /Users/mz01-heesukwak/Documents/mgz/PMS_dump.sql:/docker-entrypoint-initdb.d/PMS_dump.sql
-    restart: always
-
-  nestjs:
-    image: node:14
-    container_name: nestjs
-    working_dir: /usr/src/app
-    volumes:
-      - .:/usr/src/app
-    ports:
-      - "3000:3000"
-    command: sh -c "npm install && npm run start:dev"
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    depends_on:
-      - mysql
+      - ./mysql_data:/var/lib/mysql
+      - /Users/mz01-heesukwak/Documents/mgz/PMS_dump.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
 
 volumes:
