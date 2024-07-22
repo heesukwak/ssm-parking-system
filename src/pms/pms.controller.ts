@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Query} from '@nestjs/common';
 import { ParkingPmsService } from './pms.service';
-import { EqInfo } from './entities/eqinfo.entity';
 import { EnExInfo } from './entities/enexInfo.entity';
 import { ParkInfo } from './entities/parkInfo.entity';
 import { RcgInfo } from './entities/rcgInfo.entity';
@@ -8,6 +7,7 @@ import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
 import { ParkingLogDto } from './dto/parkingLog.dto';
+import { EqInfo } from './entities/eqInfo.entity';
 
 
 @Controller('pms')

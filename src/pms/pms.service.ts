@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EqInfo } from './entities/eqinfo.entity';
+import { EqInfo } from './entities/eqInfo.entity';
 import { EnExInfo } from './entities/enexInfo.entity';
 import { ParkInfo } from './entities/parkInfo.entity';
 import { RcgInfo } from './entities/rcgInfo.entity';

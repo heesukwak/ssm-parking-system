@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ParkingPmsService } from './pms.service';
 import { ParkingPmsController } from './pms.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EqInfo } from './entities/eqinfo.entity';
+import { EqInfo } from './entities/eqInfo.entity';
 import { EnExInfo } from './entities/enexInfo.entity';
 import { ParkInfo } from './entities/parkInfo.entity';
 import { RcgInfo } from './entities/rcgInfo.entity';
