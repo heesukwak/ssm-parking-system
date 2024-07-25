@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { EnExInfo } from './enexInfo.entity';
 /***
  * eqinfo : 장비 정보
  */
@@ -42,4 +43,7 @@ export class EqInfo {
 
   @Column({ type: 'datetime' })
   mkdt: Date; // 생성일시
+
+  @OneToMany(() => EnExInfo, enexinfo => enexinfo.eqinfo)
+  enexinfo: EnExInfo[];
 }

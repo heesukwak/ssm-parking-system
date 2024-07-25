@@ -8,8 +8,8 @@ import { RcgInfo } from './entities/rcgInfo.entity';
 import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
-import { ParkingLogDto } from './dto/parkingLog.dto';
 import { handleDatabaseError } from 'src/utils/error.util';
+import { ParkingLogDto } from 'src/dto/parkingLog.dto';
 
 @Injectable()
 export class ParkingPmsService {
@@ -50,8 +50,8 @@ export class ParkingPmsService {
   }
 
   // 입출차 로그 조회
-  async findParkingLogInfo(parkingLogDto: ParkingLogDto) {
-    const {name, startDate, endDate} = parkingLogDto;
+  async findParkingLogInfo(parkingLogDto :ParkingLogDto) {
+    const {name, startDate, endDate } = parkingLogDto
     try{
       const query = this.eqInfoRepository
       .createQueryBuilder('eqinfo')
@@ -72,21 +72,22 @@ export class ParkingPmsService {
         query.where("eqinfo.name IN (:...names)", { names: ['입구', '출구'] });
       }
 
+     
       function convertToLocalISO(dateString, addDays = 0) {
         const date = new Date(dateString);
         date.setDate(date.getDate() + addDays);
         return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('.')[0] + 'Z';
       }
-      
-      const setStartDate = convertToLocalISO(startDate);
-      const setEndDate = convertToLocalISO(endDate, 1); 
-      
-      if (setStartDate && setEndDate) {
-        console.log(setEndDate, setStartDate);
-        query.andWhere('enexinfo.enexdt >= :setStartDate AND enexinfo.enexdt < :setEndDate', {
-          setStartDate,
-          setEndDate,
-        });
+      if (startDate || endDate){
+        const setStartDate = convertToLocalISO(startDate);
+        const setEndDate = convertToLocalISO(endDate, 1); 
+        if (setStartDate && setEndDate) {
+          console.log(setEndDate, setStartDate);
+          query.andWhere('enexinfo.enexdt >= :setStartDate AND enexinfo.enexdt < :setEndDate', {
+            setStartDate,
+            setEndDate,
+          });
+        }
       }
       
       const result = await query.getRawMany();

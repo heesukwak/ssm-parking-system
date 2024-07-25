@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query} from '@nestjs/common';
+import { Controller, Get, Param, Query, Res, Response} from '@nestjs/common';
 import { ParkingPmsService } from './pms.service';
 import { EnExInfo } from './entities/enexInfo.entity';
 import { ParkInfo } from './entities/parkInfo.entity';
@@ -6,8 +6,8 @@ import { RcgInfo } from './entities/rcgInfo.entity';
 import { ScUserInfo } from './entities/scuserInfo.entity';
 import { ScIssInfo } from './entities/scIssInfo.entity';
 import { ScInfo } from './entities/scInfo.entity';
-import { ParkingLogDto } from './dto/parkingLog.dto';
 import { EqInfo } from './entities/eqInfo.entity';
+import { ParkingLogDto } from 'src/dto/parkingLog.dto';
 
 
 @Controller('pms')
@@ -33,30 +33,30 @@ export class ParkingPmsController {
   /**
    * 입출차 로그 조회
   */
- @Get('getParkingLog')
- async getParkingLogInfo(@Query() parkingLogDto : ParkingLogDto) {
-    const result = await this.parkingPmsService.findParkingLogInfo(parkingLogDto);
-    return {
-      resultCode: "SUCCESS",
-      body: result
-    };
+  @Get('getParkingLog')
+  async getParkingLogInfo(@Query() parkingLogDto :ParkingLogDto){
+      const result = await this.parkingPmsService.findParkingLogInfo(parkingLogDto);
+      return {
+        resultCode: "SUCCESS",
+        body: result
+      };
+    } 
+
+/**
+ * 주차 정보 조회
+ */
+  @Get('getParkInfo')
+  async getParkInfo(): Promise<ParkInfo[]> {
+    return await this.parkingPmsService.findParkInfo();
   }
 
   /**
-   * 주차 정보 조회
-   */
-   @Get('getParkInfo')
-   async getParkInfo(): Promise<ParkInfo[]> {
-     return await this.parkingPmsService.findParkInfo();
-   }
-
-   /**
-   * 주차 정보 조회
-   */
-   @Get('getRcgInfo')
-   async getRcgInfo(): Promise<RcgInfo[]> {
-     return await this.parkingPmsService.findRcgInfo();
-   }
+ * 주차 정보 조회
+ */
+  @Get('getRcgInfo')
+  async getRcgInfo(): Promise<RcgInfo[]> {
+    return await this.parkingPmsService.findRcgInfo();
+  }
 
   /**
    * 정기권 그룹 정보 조회

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import { EqInfo } from './eqInfo.entity';
 /***
  * EnExInfo : 입출차 정보
  */
@@ -42,4 +43,7 @@ export class EnExInfo {
 
   @Column({ type: 'datetime' })
   chdt: Date; // 변경 일시
+
+  @ManyToOne(()=> EqInfo, eqinfo => eqinfo.enexinfo)
+  eqinfo: EqInfo[];
 }
